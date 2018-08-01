@@ -1,6 +1,7 @@
 package tacos.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -8,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.configurers
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
@@ -20,6 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
+    @Qualifier("userRepositoryUserDetailsService")
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -28,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/design", "/orders")
-                .hasRole("ROLE_USER")
+                .hasRole("USER")
                 .antMatchers("/**").permitAll()
                 .and()
                 .formLogin()
@@ -50,7 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         auth
-                .userDetailsService(userDetailsService)
+                .userDetailsService(userDetailsService);
+
+        auth
                 .jdbcAuthentication()
                 .dataSource(dataSource)
                 .usersByUsernameQuery(

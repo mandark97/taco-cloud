@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "Taco_Order")
 public class Order implements Serializable {
-
     @ManyToMany(targetEntity = Taco.class)
     private List<Taco> tacos = new ArrayList<>();
 
@@ -60,5 +59,9 @@ public class Order implements Serializable {
     @PrePersist
     void placedAt() {
         this.placedAt = new Date();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
